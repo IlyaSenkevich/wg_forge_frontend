@@ -1,26 +1,100 @@
-// this is an example of improting data from JSON
 import orders from '../data/orders.json';
+import users from '../data/users';
 
 const cardNumber = (str) => {
-   const newStr = str.replace(/\d(?=\d{4})/g, "*");
-   return newStr;
+  const newStr = str.replace(/\d(?=\d{4})/g, "*");
+  return newStr;
 };
 
 const dateFormat = (date) => {
- const newDate = date 
+  const theDate = new Date(date * 1000);
+  const dateString = ('0' + theDate.getUTCDate()).slice(-2) +
+    '/' + ('0' + theDate.getUTCMonth()).slice(-2) +
+    '/' + theDate.getUTCFullYear() +
+    ', ' + ('0' + theDate.getUTCHours()).slice(-2) +
+    ':' + ('0' + theDate.getUTCMinutes()).slice(-2) +
+    ':' + ('0' + theDate.getUTCSeconds()).slice(-2);
+  return dateString;
 };
 
+const convertingUSD = (total) => {
+  const moneyUSD = `$${total}`;
+  return moneyUSD;
+}
+
+const findUser = (userId) => {
+  const user = users.filter(user => {
+    return user.id === userId;
+  });
+  return user[0];
+};
+
+const chooseGender = (user) => {
+  if (user.gender === 'Male') {
+    return `Mr. ${user.first_name} ${user.last_name}`
+  } else {
+    return `Ms. ${user.first_name} ${user.last_name}`;
+  }
+};
+
+const birthday = (date) => {
+  const theDate = new Date(date * 1000);
+  const dateString = ('0' + theDate.getUTCDate()).slice(-2) +
+    '/' + ('0' + theDate.getUTCMonth()).slice(-2) +
+    '/' + theDate.getUTCFullYear();
+  return dateString;
+};
+
+
+
 export default (function () {
-    orders.map(order => {
-      const str = cardNumber(order.card_number);
-        document.getElementById("app").innerHTML += `
+  orders.map(order => {
+    const str = cardNumber(order.card_number);
+    const date = dateFormat(order.created_at);
+    const usd = convertingUSD(order.total);
+    const user = findUser(order.user_id);
+    const gender = chooseGender(user);
+    const birth = birthday(user.birthday);
+    document.getElementById("app").innerHTML += `
         <tr id=${order.id}>
             <td>${order.transaction_id}</td>
-            <td class="user_data">${order.user_id}</td>
-            <td>${order.created_at}</td>
-            <td>${order.total}</td>
+            <td class="user_data">
+               <a onclick="show()" class='linka-${order.id}' href="#">${gender}</a>
+               <div style="display: block" class="user-details-${order.id}">
+                   <p>Birthday: ${birth}</p>
+                   <p><img  src="${user.avatar}" width="100px"></p>
+                   <p>Company: <a href="http://awesome.website">${user.company_id}</a></p>
+                   <p>Industry: Apparel / Consumer Services</p>
+                </div>
+            </td>
+            <td>${date}</td>
+            <td>${usd}</td>
             <td>${str}</td>
-            <td>${order.order_country}</td>
-            <td>${order.order_ip}<td>
-        </tr>`});
+            <td>${order.card_type}</td>
+            <td>${order.order_country} (${order.order_ip})<td>
+        </tr>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>
+        <br/>`
+
+        const show = () => {
+          console.log('YES');
+        };
+
+    // const showDetails = document.getElementsByClassName(`user-details-${order.id}`);
+    // const linka = document.getElementsByClassName(`linka-${order.id}`);
+
+    // linka.onclick = function() {
+    //   console.log('yes');
+    //   console.log(showDetails);
+    //   showDetails.style.display = 'block';
+    // };
+
+   
+  });
 }());
+
+
