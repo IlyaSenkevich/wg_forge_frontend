@@ -45,8 +45,6 @@ const birthday = (date) => {
   return dateString;
 };
 
-
-
 export default (function () {
   orders.map(order => {
     const str = cardNumber(order.card_number);
@@ -59,8 +57,8 @@ export default (function () {
         <tr id=${order.id}>
             <td>${order.transaction_id}</td>
             <td class="user_data">
-               <a onclick="show()" class='linka-${order.id}' href="#">${gender}</a>
-               <div style="display: block" class="user-details-${order.id}">
+               <a class='linka-${order.id}' href="#">${gender}</a>
+               <div style="display: none" id="info" class="user-details-${order.id}">
                    <p>Birthday: ${birth}</p>
                    <p><img  src="${user.avatar}" width="100px"></p>
                    <p>Company: <a href="http://awesome.website">${user.company_id}</a></p>
@@ -74,27 +72,23 @@ export default (function () {
             <td>${order.order_country} (${order.order_ip})<td>
         </tr>
         <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>
-        <br/>`
-
-        const show = () => {
-          console.log('YES');
-        };
-
-    // const showDetails = document.getElementsByClassName(`user-details-${order.id}`);
-    // const linka = document.getElementsByClassName(`linka-${order.id}`);
-
-    // linka.onclick = function() {
-    //   console.log('yes');
-    //   console.log(showDetails);
-    //   showDetails.style.display = 'block';
-    // };
-
-   
-  });
+       `});
 }());
+
+orders.map(order => {
+  const linka = document.querySelector(`.linka-${order.id}`);
+  var informationClient = document.querySelector(`.user-details-${order.id}`);
+  linka.addEventListener('click', () => {
+    if (informationClient.style.display === 'none') {
+      informationClient.style.display = 'block';
+    } else {
+      informationClient.style.display = 'none';
+    }
+  })
+})
+
+
+
+
 
 
