@@ -45,7 +45,18 @@ const birthday = (date) => {
   return dateString;
 };
 
+
 export default (function () {
+  document.getElementById('head-col').innerHTML = `  
+  <tr>
+      <th>Transaction ID</th>
+      <th>User Info</th>
+      <th>Order Date</th>
+      <th class='table-sort'>Order Amount</th>
+      <th>Card Number</th>
+      <th>Card Type</th>
+      <th>Location</th>
+  </tr>`;
   orders.map(order => {
     const str = cardNumber(order.card_number);
     const date = dateFormat(order.created_at);
@@ -73,6 +84,8 @@ export default (function () {
         </tr>
         <br/>
        `});
+
+
 }());
 
 orders.map(order => {
@@ -86,6 +99,26 @@ orders.map(order => {
     }
   })
 })
+
+const orderAmount = document.querySelector('.table-sort');
+
+const getSort = ({ target }) => {
+  const order = (target.dataset.order = -(target.dataset.order || -1));
+  const index = [...target.parentNode.cells].indexOf(target);
+  const collator = new Intl.Collator(['en', 'ru'], { numeric: true });
+  const comparator = (index, order) => (a, b) => order * collator.compare(
+    a.children[index].innerHTML,
+    b.children[index].innerHTML
+  );
+
+  for (const tBody of target.closest('table').tBodies)
+    tBody.append(...[...tBody.rows].sort(comparator(index, order)));
+
+  for (const cell of target.parentNode.cells)
+    cell.classList.toggle('sorted', cell === target);
+};
+
+orderAmount.addEventListener('click', () => getSort(event));
 
 
 
